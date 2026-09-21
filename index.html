@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA">
-<title>Cardeneta Fiado Digital</title>
+<title>Maria Fernanda Doces</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M9 20 L31 20 L27 37 Q20 40 13 37 Z' fill='%23B9704A'/%3E%3Cpath d='M10 20 Q9 12 20 12 Q31 12 30 20 Q20 24 10 20 Z' fill='%23F291B9'/%3E%3Ccircle cx='20' cy='9' r='3.4' fill='%23D6406F'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,6 +62,12 @@
 
   .titulo { margin: 0; font: 700 34px/1.1 var(--fonte-mao); color: var(--tinta); }
   .titulo svg { width: 30px; height: 30px; vertical-align: -5px; margin-left: 4px; }
+  .marca { margin: 0; line-height: 1.05; }
+  .marca .nome { display: block; font: 700 36px var(--fonte-mao); color: var(--tinta); }
+  .marca .doces { display: block; margin-top: 1px; font: 700 17px Georgia, 'Times New Roman', serif; letter-spacing: 3px; text-transform: uppercase; color: var(--texto); }
+  .marca.pequena .nome { font-size: 25px; }
+  .marca.pequena .doces { font-size: 11px; letter-spacing: 2px; }
+  svg.menina { width: 84px; height: auto; display: block; margin: 6px auto 2px; }
   .rotulo { margin: 14px 0 0; color: var(--tinta-suave); font-size: 15px; }
   .valor-grande { margin: 0; font: 700 42px/1.2 var(--fonte-mao); color: var(--tinta); }
   .valor-grande.deve { color: var(--vermelho); }
@@ -330,12 +336,40 @@ function htmlDocinhos() {
     ${svgDoce('#8C5A3C', '#F0C6DB', '#D6406F')}
   </div>`;
 }
+function svgMenina() {
+  return `<svg class="menina" viewBox="0 0 140 178" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="70" cy="170" rx="32" ry="5" fill="#00000012"/>
+    <path d="M45 108 Q40 130 44 150" fill="none" stroke="#8FD3B6" stroke-width="11" stroke-linecap="round"/>
+    <path d="M93 108 Q101 120 95 136" fill="none" stroke="#8FD3B6" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="44" cy="151" r="7.5" fill="#F2C29A"/>
+    <g transform="translate(90,127) rotate(-10)">
+      <path d="M-9 9 L9 9 L6.5 20 Q0 23.5 -6.5 20 Z" fill="#F291B9"/>
+      <path d="M-8 9 Q-9 2 0 2 Q9 2 8 9 Q0 12 -8 9 Z" fill="#FFFFFF"/>
+      <circle cx="0" cy="0" r="2.4" fill="#D6406F"/>
+    </g>
+    <path d="M41 104 Q70 96 99 104 L104 152 Q70 168 36 152 Z" fill="#8FD3B6"/>
+    <path d="M56 108 Q70 118 84 108 L82 150 Q70 156 58 150 Z" fill="#FFFFFF"/>
+    <circle cx="70" cy="126" r="2.6" fill="#E8478B"/>
+    <circle cx="38" cy="63" r="11" fill="#6B4227"/>
+    <circle cx="102" cy="63" r="11" fill="#6B4227"/>
+    <circle cx="70" cy="62" r="28" fill="#F2C29A"/>
+    <path d="M60 76 Q70 82 80 76" fill="none" stroke="#3A2418" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="59" cy="61" r="2.8" fill="#3A2418"/>
+    <circle cx="81" cy="61" r="2.8" fill="#3A2418"/>
+    <ellipse cx="52" cy="70" rx="4.2" ry="2.8" fill="#F291B9" opacity=".65"/>
+    <ellipse cx="88" cy="70" rx="4.2" ry="2.8" fill="#F291B9" opacity=".65"/>
+    <path d="M41 46 Q42 30 70 29 Q98 30 99 46 Q94 36 70 35 Q46 36 41 46 Z" fill="#6B4227"/>
+    <path d="M43 40 Q70 10 97 40 Q98 27 70 25 Q42 27 43 40 Z" fill="#FFFFFF" stroke="#E7CBD8" stroke-width="1.5"/>
+    <rect x="51" y="36" width="38" height="11" rx="5.5" fill="#FFFFFF" stroke="#E7CBD8" stroke-width="1.5"/>
+  </svg>`;
+}
 function htmlLogin() {
   return `
   <main class="login">
     <div class="selo">
-      <h1 class="titulo">Cardeneta</h1>
-      <p class="meta">Fiado digital de doces</p>
+      <p class="marca"><span class="nome">Maria Fernanda</span><span class="doces">Doces</span></p>
+      <p class="meta">Cardeneta · fiado digital</p>
+      ${svgMenina()}
       ${htmlDocinhos()}
     </div>
     <form id="f-login">
@@ -378,7 +412,7 @@ function htmlClientes() {
   return `
   <header class="topo">
     <div class="topo-linha">
-      <h1 class="titulo">Cardeneta ${svgDoce('#F291B9', '#FFFFFF', '#D6406F')}</h1>
+      <h1 class="marca pequena"><span class="nome">Maria Fernanda</span><span class="doces">Doces</span></h1>
       <nav class="topo-nav">
         <button class="link" data-acao="novoCliente">+ Cliente</button>
         <button class="link" data-acao="doces">Doces</button>
@@ -756,7 +790,7 @@ document.addEventListener('click', e => {
 
 /* ---------- início ---------- */
 async function iniciar() {
-  if (SUPABASE_URL.includes('COLE_AQUI') || SUPABASE_KEY.includes('COLE_AQUI')) {
+  if (SUPABASE_URL.includes('https://sderasllbmncwhppvbsb.supabase.co') || SUPABASE_KEY.includes('sb_publishable_R9CtxIunqmgSHIbkxNj9uw_Jh0ZLPzT')) {
     $('#app').innerHTML = htmlConfigFaltando();
     return;
   }
