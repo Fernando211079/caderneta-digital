@@ -1,0 +1,746 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F9FE">
+<title>Cardeneta Fiado Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --papel: #F6F9FE;
+    --fundo: #E3EAF5;
+    --linha: #CBDDF3;
+    --margem: #E4574F;
+    --tinta: #1D3C9C;
+    --tinta-suave: #5A6FB0;
+    --texto: #14204D;
+    --vermelho: #C8352E;
+    --verde: #1F8A5B;
+    --rosa: #E8478B;
+    --fonte-mao: 'Kalam', 'Segoe Print', 'Bradley Hand', cursive;
+    --fonte-texto: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font: 400 17px/1.4 var(--fonte-texto);
+  }
+  button, input { font-family: inherit; }
+  :focus-visible { outline: 3px solid var(--rosa); outline-offset: 2px; }
+
+  /* A folha de caderno: linha vermelha de margem à esquerda */
+  .folha {
+    position: relative;
+    max-width: 480px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0 auto;
+    background: var(--papel);
+    box-shadow: 0 0 0 1px var(--linha);
+    padding-bottom: 96px;
+  }
+  .folha::before {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 42px;
+    width: 2px;
+    background: var(--margem);
+    opacity: .55;
+    pointer-events: none;
+  }
+  .folha > * { position: relative; }
+
+  .titulo { margin: 0; font: 700 34px/1.1 var(--fonte-mao); color: var(--tinta); }
+  .rotulo { margin: 14px 0 0; color: var(--tinta-suave); font-size: 15px; }
+  .valor-grande { margin: 0; font: 700 42px/1.2 var(--fonte-mao); color: var(--tinta); }
+  .valor-grande.deve { color: var(--vermelho); }
+  .meta { margin: 2px 0 0; color: var(--tinta-suave); font-size: 15px; }
+  .dica { margin: 12px 0 0; color: var(--tinta-suave); font-size: 15px; }
+  .sec { margin: 22px 0 4px; padding-left: 58px; font: 700 22px var(--fonte-mao); color: var(--tinta); }
+  .vazio { margin: 0; padding: 24px 16px 24px 58px; color: var(--tinta-suave); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .topo { padding: 18px 16px 12px 58px; }
+  .topo-linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .topo-nav { display: flex; gap: 4px; }
+  .pag { padding: 8px 16px 16px 58px; }
+  .login { padding: 72px 20px 24px 58px; }
+
+  .link {
+    background: none; border: 0; padding: 10px 8px; min-height: 44px;
+    color: var(--tinta); font: 700 16px var(--fonte-texto);
+    text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+  }
+
+  .busca { display: block; margin-top: 16px; }
+  .busca input, .campo input {
+    width: 100%; min-height: 50px; padding: 0 12px;
+    border: 1.5px solid var(--linha); border-radius: 10px;
+    background: #fff; color: var(--texto); font: 400 17px var(--fonte-texto);
+  }
+
+  .btn {
+    display: block; width: 100%; min-height: 50px; margin-top: 10px; padding: 0 16px;
+    border: 0; border-radius: 10px; background: var(--tinta); color: #fff;
+    font: 700 17px var(--fonte-texto); cursor: pointer;
+  }
+  .btn.sec { background: transparent; color: var(--tinta); box-shadow: inset 0 0 0 2px var(--tinta); }
+  .btn.zap { background: var(--verde); }
+  .btn.perigo { background: transparent; color: var(--vermelho); box-shadow: inset 0 0 0 2px var(--vermelho); }
+  .btn:disabled { opacity: .5; cursor: default; }
+
+  .acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 16px 4px 58px; }
+  .acoes .btn { margin-top: 0; }
+  .acoes .zap { grid-column: 1 / -1; }
+
+  /* Cada linha é uma linha do caderno. A coluna estreita é a margem: guarda o código. */
+  .linha {
+    display: grid; grid-template-columns: 42px 1fr auto; align-items: center;
+    width: 100%; min-height: 60px; padding: 8px 16px 8px 0;
+    border: 0; border-bottom: 1px solid var(--linha);
+    background: transparent; color: inherit; text-align: left; font: inherit;
+  }
+  button.linha { cursor: pointer; }
+  button.linha:hover { background: rgba(29, 60, 156, .05); }
+  .linha .cod { text-align: center; font-size: 13px; color: var(--tinta-suave); }
+  .linha .nome { padding-left: 16px; font: 400 21px/1.2 var(--fonte-mao); color: var(--tinta); overflow-wrap: anywhere; }
+  .linha .nome small { display: block; font: 400 14px var(--fonte-texto); color: var(--tinta-suave); }
+  .linha .saldo { font: 700 20px var(--fonte-mao); white-space: nowrap; }
+  .saldo.deve { color: var(--vermelho); }
+  .saldo.ok { color: var(--tinta-suave); font-weight: 400; }
+  .linha.mov { grid-template-columns: 42px 1fr auto auto; }
+  .mov .valor-mov { font: 700 19px var(--fonte-mao); white-space: nowrap; }
+  .mov .valor-mov.venda { color: var(--vermelho); }
+  .mov .valor-mov.pagto { color: var(--verde); }
+  .mov .x { background: none; border: 0; width: 44px; height: 44px; font-size: 22px; color: var(--tinta-suave); cursor: pointer; }
+
+  .rodape {
+    position: sticky; bottom: 0; z-index: 5;
+    padding: 24px 16px calc(14px + env(safe-area-inset-bottom)) 58px;
+    background: linear-gradient(to bottom, rgba(246, 249, 254, 0), var(--papel) 40%);
+    margin-top: -60px;
+  }
+
+  /* Folha que sobe de baixo para cadastros e lançamentos */
+  .veu {
+    position: fixed; inset: 0; z-index: 20;
+    display: flex; align-items: flex-end; justify-content: center;
+    background: rgba(15, 25, 70, .45);
+  }
+  .sheet {
+    width: 100%; max-width: 480px; max-height: 90vh; max-height: 90dvh; overflow: auto;
+    padding: 18px 20px calc(24px + env(safe-area-inset-bottom));
+    background: #fff; border-radius: 20px 20px 0 0;
+    animation: sobe .22s ease-out;
+  }
+  @keyframes sobe { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .sheet-topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .sheet-topo h2 { margin: 0; font: 700 24px/1.2 var(--fonte-mao); color: var(--tinta); }
+  .campo { display: block; margin-top: 14px; }
+  .campo span { display: block; margin-bottom: 6px; font-weight: 700; color: var(--tinta); }
+  .erro { min-height: 1.4em; margin: 10px 0 0; color: var(--vermelho); }
+
+  .abas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .aba {
+    min-height: 46px; border: 1.5px solid var(--linha); border-radius: 10px;
+    background: #fff; color: var(--tinta); font: 700 16px var(--fonte-texto); cursor: pointer;
+  }
+  .aba.ativa { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+  .item-doce { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--linha); }
+  .item-doce small { display: block; color: var(--tinta-suave); }
+  .stepper { display: flex; align-items: center; gap: 8px; }
+  .stepper button {
+    width: 44px; height: 44px; border: 1.5px solid var(--tinta); border-radius: 10px;
+    background: #fff; color: var(--tinta); font-size: 22px; cursor: pointer;
+  }
+  .stepper output { min-width: 28px; text-align: center; font: 700 20px var(--fonte-mao); }
+  .total-venda { display: flex; justify-content: space-between; align-items: baseline; margin-top: 14px; font-weight: 700; }
+  .total-venda strong { font: 700 28px var(--fonte-mao); color: var(--tinta); }
+
+  #avisos { position: fixed; left: 0; right: 0; bottom: calc(90px + env(safe-area-inset-bottom)); z-index: 30; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+  .aviso { max-width: 90%; padding: 12px 16px; border-radius: 10px; background: var(--tinta); color: #fff; font-weight: 700; }
+  .aviso.erro { background: var(--vermelho); }
+
+  @media (prefers-reduced-motion: reduce) { .sheet { animation: none; } }
+</style>
+</head>
+<body>
+<div class="folha" id="app"></div>
+<div id="camada"></div>
+<div id="avisos" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+
+/* ===== 1) COLE AQUI os dados do seu projeto Supabase (Project Settings > API) ===== */
+const SUPABASE_URL = 'COLE_AQUI_A_URL_DO_PROJETO';
+const SUPABASE_KEY = 'COLE_AQUI_A_CHAVE_ANON_PUBLIC';
+/* ================================================================================== */
+
+const state = {
+  user: null, tela: 'clientes', clienteId: null, busca: '',
+  clientes: [], produtos: [], config: {}, vendas: [], pagamentos: [], docId: null
+};
+let db = null;
+
+/* ---------- utilidades ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const cents = n => Math.round(Number(n) * 100);
+
+function parseValor(txt) {
+  let s = String(txt ?? '').trim().replace(/[^\d.,]/g, '');
+  if (!s) return NaN;
+  if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? Math.round(n * 100) / 100 : NaN;
+}
+function fmtDia(s) {
+  return new Date(s).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+function fmtHora(s) {
+  const d = new Date(s);
+  const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  return d.getFullYear() === new Date().getFullYear() ? hora : hora + ', ' + d.getFullYear();
+}
+function msgErro(err) {
+  const m = String(err?.message || '');
+  if (/Invalid login credentials/i.test(m)) return 'E-mail ou senha incorretos.';
+  if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return 'Sem conexão com a internet. Tente de novo.';
+  return m || 'Algo deu errado. Tente de novo.';
+}
+function toast(msg, tipo = 'ok') {
+  const t = document.createElement('div');
+  t.className = 'aviso ' + tipo;
+  t.textContent = msg;
+  $('#avisos').append(t);
+  setTimeout(() => t.remove(), 3800);
+}
+function seguro(fn) {
+  return Promise.resolve().then(fn).catch(err => { console.error(err); toast(msgErro(err), 'erro'); });
+}
+function aoEnviar(form, fn) {
+  form.addEventListener('submit', ev => {
+    ev.preventDefault();
+    const btn = form.querySelector('button[type=submit]');
+    if (btn) btn.disabled = true;
+    seguro(() => fn(new FormData(form))).finally(() => { if (btn) btn.disabled = false; });
+  });
+}
+const clienteAtual = () => state.clientes.find(c => c.id === state.clienteId);
+
+/* ---------- dados ---------- */
+async function carregarClientes() {
+  const { data, error } = await db.from('clientes_saldo').select('*').order('nome');
+  if (error) throw error;
+  state.clientes = data.map(c => ({ ...c, saldo: Number(c.saldo) }));
+}
+async function carregarProdutos() {
+  const { data, error } = await db.from('produtos').select('*').order('nome');
+  if (error) throw error;
+  state.produtos = data.map(p => ({ ...p, preco: Number(p.preco) }));
+}
+async function carregarConfig() {
+  const { data, error } = await db.from('configuracoes').select('*').maybeSingle();
+  if (error) throw error;
+  state.config = data || {};
+}
+async function carregarHistorico(id) {
+  const [v, p] = await Promise.all([
+    db.from('vendas').select('*').eq('cliente_id', id).order('created_at', { ascending: false }),
+    db.from('pagamentos').select('*').eq('cliente_id', id).order('created_at', { ascending: false })
+  ]);
+  if (v.error) throw v.error;
+  if (p.error) throw p.error;
+  state.vendas = v.data.map(x => ({ ...x, valor: Number(x.valor) }));
+  state.pagamentos = p.data.map(x => ({ ...x, valor: Number(x.valor) }));
+}
+async function carregarBase() {
+  await Promise.all([carregarClientes(), carregarProdutos(), carregarConfig()]);
+}
+async function atualizar() {
+  const tarefas = [carregarClientes()];
+  if (state.tela === 'cliente' && state.clienteId) tarefas.push(carregarHistorico(state.clienteId));
+  await Promise.all(tarefas);
+  render();
+}
+function movimentos() {
+  return [
+    ...state.vendas.map(v => ({ ...v, tipo: 'venda' })),
+    ...state.pagamentos.map(p => ({ ...p, tipo: 'pagamento' }))
+  ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
+/* ---------- navegação ---------- */
+function ir(tela, id = null) {
+  state.tela = tela;
+  state.clienteId = id;
+  if (tela !== 'clientes') history.pushState({ tela, id }, '');
+  render();
+  window.scrollTo(0, 0);
+}
+window.addEventListener('popstate', () => {
+  fecharSheet();
+  state.tela = 'clientes';
+  state.clienteId = null;
+  render();
+});
+async function abrirCliente(id) {
+  await carregarHistorico(id);
+  ir('cliente', id);
+}
+
+/* ---------- telas ---------- */
+function htmlLogin() {
+  return `
+  <main class="login">
+    <h1 class="titulo">Cardeneta</h1>
+    <p class="meta">Fiado digital de doces</p>
+    <form id="f-login">
+      <label class="campo"><span>E-mail</span><input name="email" type="email" autocomplete="username" required></label>
+      <label class="campo"><span>Senha</span><input name="senha" type="password" autocomplete="current-password" required></label>
+      <p class="erro" id="erro-login" role="alert"></p>
+      <button class="btn" type="submit">Entrar</button>
+    </form>
+  </main>`;
+}
+
+function htmlConfigFaltando() {
+  return `
+  <main class="login">
+    <h1 class="titulo">Falta conectar</h1>
+    <p>Abra o arquivo <strong>cardeneta.html</strong> em um editor de texto e cole a URL e a chave do seu projeto Supabase nas duas primeiras linhas do script (SUPABASE_URL e SUPABASE_KEY).</p>
+  </main>`;
+}
+
+function linhaCliente(c) {
+  const deve = c.saldo > 0;
+  return `
+  <button class="linha" data-acao="abrirCliente" data-id="${c.id}">
+    <span class="cod">${c.codigo}</span>
+    <span class="nome">${esc(c.nome)}${c.trabalho ? `<small>${esc(c.trabalho)}</small>` : ''}</span>
+    <span class="saldo ${deve ? 'deve' : 'ok'}">${deve ? brl.format(c.saldo) : 'Em dia'}</span>
+  </button>`;
+}
+
+function htmlLista() {
+  if (!state.clientes.length) return '<p class="vazio">Nenhum cliente ainda. Toque em “Novo cliente” para cadastrar o primeiro.</p>';
+  const q = norm(state.busca.trim());
+  const lista = state.clientes.filter(c => !q || norm(c.nome).includes(q) || String(c.codigo).startsWith(q));
+  if (!lista.length) return `<p class="vazio">Nenhum cliente encontrado para “${esc(state.busca)}”.</p>`;
+  return lista.map(linhaCliente).join('');
+}
+
+function htmlClientes() {
+  const total = state.clientes.reduce((s, c) => s + cents(c.saldo), 0) / 100;
+  return `
+  <header class="topo">
+    <div class="topo-linha">
+      <h1 class="titulo">Cardeneta</h1>
+      <nav class="topo-nav">
+        <button class="link" data-acao="doces">Doces</button>
+        <button class="link" data-acao="ajustes">Ajustes</button>
+      </nav>
+    </div>
+    <p class="rotulo">A receber de todos os clientes</p>
+    <p class="valor-grande ${total > 0 ? 'deve' : ''}">${brl.format(total)}</p>
+    <label class="busca"><span class="sr">Buscar cliente</span>
+      <input id="busca" type="search" placeholder="Buscar por nome ou código" value="${esc(state.busca)}" autocomplete="off">
+    </label>
+  </header>
+  <section id="lista">${htmlLista()}</section>
+  <div class="rodape"><button class="btn" data-acao="novoCliente">Novo cliente</button></div>`;
+}
+
+function htmlCliente(c) {
+  const deve = c.saldo > 0;
+  const movs = movimentos();
+  const linhas = movs.length ? movs.map(m => `
+    <div class="linha mov">
+      <span class="cod">${fmtDia(m.created_at)}</span>
+      <span class="nome">${esc(m.tipo === 'venda' ? (m.descricao || 'Venda') : 'Pagamento')}<small>${fmtHora(m.created_at)}</small></span>
+      <span class="valor-mov ${m.tipo === 'venda' ? 'venda' : 'pagto'}">${m.tipo === 'venda' ? '+' : '−'} ${brl.format(m.valor)}</span>
+      <button class="x" data-acao="excluirMov" data-tipo="${m.tipo}" data-id="${m.id}" aria-label="Excluir este lançamento">×</button>
+    </div>`).join('') : '<p class="vazio">Nenhum lançamento ainda. Toque em “Nova venda” para registrar a primeira.</p>';
+  return `
+  <header class="topo">
+    <div class="topo-linha">
+      <button class="link" data-acao="voltar">Voltar</button>
+      <button class="link" data-acao="editarCliente">Editar</button>
+    </div>
+    <h1 class="titulo">${esc(c.nome)}</h1>
+    <p class="meta">Código ${c.codigo}</p>
+    ${c.telefone ? `<p class="meta">Telefone ${esc(c.telefone)}</p>` : ''}
+    ${c.trabalho ? `<p class="meta">Trabalha em ${esc(c.trabalho)}</p>` : ''}
+    <p class="rotulo">${deve ? 'Deve' : 'Conta em dia'}</p>
+    <p class="valor-grande ${deve ? 'deve' : ''}">${brl.format(Math.max(c.saldo, 0))}</p>
+  </header>
+  <div class="acoes">
+    <button class="btn" data-acao="novaVenda">Nova venda</button>
+    <button class="btn sec" data-acao="receber">Receber</button>
+    <button class="btn zap" data-acao="whatsapp">Enviar no WhatsApp</button>
+  </div>
+  <h2 class="sec">Histórico</h2>
+  <section>${linhas}</section>`;
+}
+
+function htmlDoces() {
+  const linhas = state.produtos.length ? state.produtos.map(p => `
+    <button class="linha" data-acao="editarDoce" data-id="${p.id}">
+      <span class="cod"></span>
+      <span class="nome">${esc(p.nome)}</span>
+      <span class="saldo ok">${brl.format(p.preco)}</span>
+    </button>`).join('') : '<p class="vazio">Nenhum doce cadastrado. Cadastre seus doces com o preço para lançar vendas mais rápido.</p>';
+  return `
+  <header class="topo">
+    <div class="topo-linha"><button class="link" data-acao="voltar">Voltar</button></div>
+    <h1 class="titulo">Doces</h1>
+  </header>
+  <section>${linhas}</section>
+  <div class="rodape"><button class="btn" data-acao="novoDoce">Novo doce</button></div>`;
+}
+
+function htmlAjustes() {
+  return `
+  <header class="topo">
+    <div class="topo-linha"><button class="link" data-acao="voltar">Voltar</button></div>
+    <h1 class="titulo">Ajustes</h1>
+  </header>
+  <form id="f-ajustes" class="pag">
+    <label class="campo"><span>Nome do negócio (aparece na mensagem)</span>
+      <input name="nome_negocio" maxlength="60" value="${esc(state.config.nome_negocio)}"></label>
+    <label class="campo"><span>Chave Pix</span>
+      <input name="chave_pix" maxlength="120" value="${esc(state.config.chave_pix)}" placeholder="CPF, telefone, e-mail ou chave aleatória"></label>
+    <button class="btn" type="submit">Salvar ajustes</button>
+  </form>
+  <div class="pag">
+    <p class="dica">Conectada como ${esc(state.user?.email)}</p>
+    <button class="btn sec" data-acao="sair">Sair da conta</button>
+  </div>`;
+}
+
+function render() {
+  const app = $('#app');
+  if (!state.user) {
+    app.innerHTML = htmlLogin();
+    aoEnviar($('#f-login'), async fd => {
+      $('#erro-login').textContent = '';
+      const { data, error } = await db.auth.signInWithPassword({ email: fd.get('email'), password: fd.get('senha') });
+      if (error) { $('#erro-login').textContent = msgErro(error); return; }
+      state.user = data.user;
+      await carregarBase();
+      render();
+    });
+    return;
+  }
+  if (state.tela === 'cliente') {
+    const c = clienteAtual();
+    if (!c) { state.tela = 'clientes'; return render(); }
+    app.innerHTML = htmlCliente(c);
+  } else if (state.tela === 'doces') {
+    app.innerHTML = htmlDoces();
+  } else if (state.tela === 'ajustes') {
+    app.innerHTML = htmlAjustes();
+    aoEnviar($('#f-ajustes'), async fd => {
+      const { error } = await db.from('configuracoes').upsert({
+        user_id: state.user.id,
+        nome_negocio: String(fd.get('nome_negocio')).trim(),
+        chave_pix: String(fd.get('chave_pix')).trim()
+      });
+      if (error) throw error;
+      await carregarConfig();
+      toast('Ajustes salvos');
+    });
+  } else {
+    app.innerHTML = htmlClientes();
+    $('#busca').addEventListener('input', e => {
+      state.busca = e.target.value;
+      $('#lista').innerHTML = htmlLista();
+    });
+  }
+}
+
+/* ---------- folhas (cadastros e lançamentos) ---------- */
+function abrirSheet(titulo, corpo) {
+  fecharSheet();
+  const veu = document.createElement('div');
+  veu.className = 'veu';
+  veu.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(titulo)}">
+    <div class="sheet-topo"><h2>${esc(titulo)}</h2><button class="link" data-acao="fechar">Fechar</button></div>${corpo}</div>`;
+  veu.addEventListener('click', e => { if (e.target === veu) fecharSheet(); });
+  $('#camada').append(veu);
+  const sheet = veu.querySelector('.sheet');
+  const primeiro = sheet.querySelector('input');
+  if (primeiro) primeiro.focus();
+  return sheet;
+}
+function fecharSheet() { $('#camada').innerHTML = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharSheet(); });
+
+function sheetCliente(c) {
+  const sheet = abrirSheet(c ? 'Editar cliente' : 'Novo cliente', `
+    <form id="f-cli">
+      <label class="campo"><span>Nome</span><input name="nome" required maxlength="80" autocomplete="off" value="${esc(c?.nome)}"></label>
+      <label class="campo"><span>Telefone com DDD</span><input name="telefone" type="tel" inputmode="tel" placeholder="(11) 91234-5678" value="${esc(c?.telefone)}"></label>
+      <label class="campo"><span>Onde trabalha</span><input name="trabalho" maxlength="80" autocomplete="off" value="${esc(c?.trabalho)}"></label>
+      ${c ? '' : '<p class="dica">O código do cliente é gerado automaticamente.</p>'}
+      <button class="btn" type="submit">Salvar cliente</button>
+      ${c ? '<button class="btn perigo" type="button" data-acao="excluirCliente">Excluir cliente</button>' : ''}
+    </form>`);
+  aoEnviar($('#f-cli', sheet), async fd => {
+    const dados = { nome: String(fd.get('nome')).trim(), telefone: String(fd.get('telefone')).trim(), trabalho: String(fd.get('trabalho')).trim() };
+    if (!dados.nome) { toast('Digite o nome do cliente', 'erro'); return; }
+    if (c) {
+      const { error } = await db.from('clientes').update(dados).eq('id', c.id);
+      if (error) throw error;
+      toast('Cliente salvo');
+    } else {
+      const { data, error } = await db.from('clientes').insert(dados).select().single();
+      if (error) throw error;
+      toast('Cliente cadastrado com o código ' + data.codigo);
+    }
+    fecharSheet();
+    await atualizar();
+  });
+}
+
+function sheetVenda(c) {
+  let modo = 'valor';
+  const qtd = {};
+  const sheet = abrirSheet('Nova venda', '<div id="venda-corpo"></div>');
+  const corpo = $('#venda-corpo', sheet);
+  const itens = () => state.produtos.filter(p => qtd[p.id] > 0);
+  const total = () => itens().reduce((s, p) => s + cents(p.preco) * qtd[p.id], 0) / 100;
+
+  async function registrar(descricao, valor) {
+    const { error } = await db.from('vendas').insert({ cliente_id: c.id, descricao: descricao || 'Venda', valor });
+    if (error) throw error;
+    fecharSheet();
+    toast('Venda registrada: ' + brl.format(valor));
+    await atualizar();
+  }
+
+  function desenhar() {
+    const abas = `
+      <p class="dica">Cliente: <strong>${esc(c.nome)}</strong>. Data e hora ficam registradas automaticamente.</p>
+      <div class="abas">
+        <button type="button" class="aba ${modo === 'valor' ? 'ativa' : ''}" data-modo="valor">Digitar valor</button>
+        <button type="button" class="aba ${modo === 'lista' ? 'ativa' : ''}" data-modo="lista">Escolher doces</button>
+      </div>`;
+    if (modo === 'valor') {
+      corpo.innerHTML = abas + `
+        <form id="f-venda">
+          <label class="campo"><span>Descrição (opcional)</span><input name="descricao" maxlength="120" autocomplete="off" placeholder="Ex.: 2 brigadeiros e 1 bolo"></label>
+          <label class="campo"><span>Valor</span><input name="valor" inputmode="decimal" placeholder="0,00" required></label>
+          <button class="btn" type="submit">Registrar venda</button>
+        </form>`;
+      aoEnviar($('#f-venda', corpo), async fd => {
+        const valor = parseValor(fd.get('valor'));
+        if (!(valor > 0)) { toast('Digite um valor maior que zero', 'erro'); return; }
+        await registrar(String(fd.get('descricao')).trim(), valor);
+      });
+    } else if (!state.produtos.length) {
+      corpo.innerHTML = abas + `<p class="dica">Você ainda não cadastrou doces com preço.</p>
+        <button class="btn sec" type="button" id="ir-doces">Cadastrar doces</button>`;
+      $('#ir-doces', corpo).addEventListener('click', () => { fecharSheet(); ir('doces'); });
+    } else {
+      corpo.innerHTML = abas + state.produtos.map(p => `
+        <div class="item-doce">
+          <div><strong>${esc(p.nome)}</strong><small>${brl.format(p.preco)}</small></div>
+          <div class="stepper">
+            <button type="button" data-dec="${p.id}" aria-label="Tirar um ${esc(p.nome)}">−</button>
+            <output>${qtd[p.id] || 0}</output>
+            <button type="button" data-inc="${p.id}" aria-label="Adicionar um ${esc(p.nome)}">+</button>
+          </div>
+        </div>`).join('') + `
+        <div class="total-venda"><span>Total</span><strong>${brl.format(total())}</strong></div>
+        <button class="btn" type="button" id="reg-lista" ${total() > 0 ? '' : 'disabled'}>Registrar venda</button>`;
+      $('#reg-lista', corpo).addEventListener('click', ev => {
+        ev.currentTarget.disabled = true;
+        const desc = itens().map(p => `${qtd[p.id]}x ${p.nome}`).join(', ');
+        seguro(() => registrar(desc, total())).finally(() => { if (ev.currentTarget) ev.currentTarget.disabled = false; });
+      });
+    }
+  }
+
+  corpo.addEventListener('click', ev => {
+    const b = ev.target.closest('button');
+    if (!b) return;
+    if (b.dataset.modo) { modo = b.dataset.modo; desenhar(); }
+    else if (b.dataset.inc) { qtd[b.dataset.inc] = (qtd[b.dataset.inc] || 0) + 1; desenhar(); }
+    else if (b.dataset.dec) { qtd[b.dataset.dec] = Math.max((qtd[b.dataset.dec] || 0) - 1, 0); desenhar(); }
+  });
+  desenhar();
+}
+
+function sheetPagamento(c) {
+  if (!(c.saldo > 0)) {
+    abrirSheet('Receber pagamento', '<p class="dica">Este cliente não tem dívida no momento.</p>');
+    return;
+  }
+  const sheet = abrirSheet('Receber pagamento', `
+    <p class="dica">Dívida atual de <strong>${esc(c.nome)}</strong>: <strong>${brl.format(c.saldo)}</strong></p>
+    <form id="f-pag">
+      <label class="campo"><span>Valor recebido</span><input name="valor" inputmode="decimal" placeholder="0,00" required></label>
+      <button class="btn sec" type="button" id="quitar">Quitar tudo (${brl.format(c.saldo)})</button>
+      <button class="btn" type="submit">Registrar pagamento</button>
+    </form>`);
+  $('#quitar', sheet).addEventListener('click', () => {
+    $('input[name=valor]', sheet).value = String(c.saldo.toFixed(2)).replace('.', ',');
+  });
+  aoEnviar($('#f-pag', sheet), async fd => {
+    const valor = parseValor(fd.get('valor'));
+    if (!(valor > 0)) { toast('Digite um valor maior que zero', 'erro'); return; }
+    if (cents(valor) > cents(c.saldo)) { toast('O valor é maior que a dívida de ' + brl.format(c.saldo), 'erro'); return; }
+    const { error } = await db.from('pagamentos').insert({ cliente_id: c.id, valor });
+    if (error) throw error;
+    fecharSheet();
+    toast(cents(valor) === cents(c.saldo) ? 'Dívida quitada' : 'Pagamento registrado: ' + brl.format(valor));
+    await atualizar();
+  });
+}
+
+function sheetDoce(p) {
+  state.docId = p?.id ?? null;
+  const sheet = abrirSheet(p ? 'Editar doce' : 'Novo doce', `
+    <form id="f-doce">
+      <label class="campo"><span>Nome do doce</span><input name="nome" required maxlength="60" autocomplete="off" value="${esc(p?.nome)}"></label>
+      <label class="campo"><span>Preço</span><input name="preco" inputmode="decimal" placeholder="0,00" required value="${p ? String(p.preco.toFixed(2)).replace('.', ',') : ''}"></label>
+      <button class="btn" type="submit">Salvar doce</button>
+      ${p ? '<button class="btn perigo" type="button" data-acao="excluirDoce">Excluir doce</button>' : ''}
+    </form>`);
+  aoEnviar($('#f-doce', sheet), async fd => {
+    const nome = String(fd.get('nome')).trim();
+    const preco = parseValor(fd.get('preco'));
+    if (!nome) { toast('Digite o nome do doce', 'erro'); return; }
+    if (!(preco > 0)) { toast('Digite um preço maior que zero', 'erro'); return; }
+    const { error } = p
+      ? await db.from('produtos').update({ nome, preco }).eq('id', p.id)
+      : await db.from('produtos').insert({ nome, preco });
+    if (error) throw error;
+    fecharSheet();
+    await carregarProdutos();
+    render();
+    toast('Doce salvo');
+  });
+}
+
+/* ---------- WhatsApp ---------- */
+function telWhats(t) {
+  let d = String(t || '').replace(/\D/g, '').replace(/^0+/, '');
+  if (d && d.length <= 11) d = '55' + d;
+  return d;
+}
+function abrirWhatsApp(c) {
+  const todos = movimentos().reverse();
+  const ultimos = todos.slice(-15);
+  const negocio = state.config.nome_negocio ? ' na ' + state.config.nome_negocio : '';
+  const primeiro = c.nome.trim().split(/\s+/)[0];
+  let msg = `Olá, ${primeiro}! 🍬\nSegue o extrato da sua conta${negocio}:\n\n`;
+  if (todos.length > ultimos.length) msg += `(últimos ${ultimos.length} lançamentos)\n`;
+  msg += ultimos.map(m => {
+    const quando = `${fmtDia(m.created_at)} ${new Date(m.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+    return m.tipo === 'venda'
+      ? `${quando}  ${m.descricao || 'Venda'}  ${brl.format(m.valor)}`
+      : `${quando}  Pagamento recebido  -${brl.format(m.valor)}`;
+  }).join('\n');
+  if (c.saldo > 0) {
+    msg += `\n\n*Total devido: ${brl.format(c.saldo)}*`;
+    if (state.config.chave_pix) msg += `\n\nPix para pagamento:\n${state.config.chave_pix}`;
+    else toast('Cadastre a chave Pix em Ajustes para ela ir na mensagem', 'erro');
+  } else {
+    msg += '\n\nSua conta está em dia. Obrigada!';
+  }
+  const tel = telWhats(c.telefone);
+  window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+/* ---------- ações dos botões ---------- */
+const acoes = {
+  voltar: () => history.back(),
+  fechar: () => fecharSheet(),
+  abrirCliente: id => abrirCliente(id),
+  novoCliente: () => sheetCliente(null),
+  editarCliente: () => sheetCliente(clienteAtual()),
+  excluirCliente: async () => {
+    const c = clienteAtual();
+    if (!c || !confirm(`Excluir ${c.nome} e todo o histórico dele? Isso não pode ser desfeito.`)) return;
+    const { error } = await db.from('clientes').delete().eq('id', c.id);
+    if (error) throw error;
+    fecharSheet();
+    await carregarClientes();
+    toast('Cliente excluído');
+    history.back();
+  },
+  novaVenda: () => sheetVenda(clienteAtual()),
+  receber: () => sheetPagamento(clienteAtual()),
+  whatsapp: () => abrirWhatsApp(clienteAtual()),
+  excluirMov: async (id, el) => {
+    if (!confirm('Excluir este lançamento?')) return;
+    const tabela = el.dataset.tipo === 'venda' ? 'vendas' : 'pagamentos';
+    const { error } = await db.from(tabela).delete().eq('id', id);
+    if (error) throw error;
+    toast('Lançamento excluído');
+    await atualizar();
+  },
+  doces: () => ir('doces'),
+  novoDoce: () => sheetDoce(null),
+  editarDoce: id => sheetDoce(state.produtos.find(p => p.id === id)),
+  excluirDoce: async () => {
+    if (!state.docId || !confirm('Excluir este doce da lista?')) return;
+    const { error } = await db.from('produtos').delete().eq('id', state.docId);
+    if (error) throw error;
+    fecharSheet();
+    await carregarProdutos();
+    render();
+    toast('Doce excluído');
+  },
+  ajustes: () => ir('ajustes'),
+  sair: async () => {
+    await db.auth.signOut();
+    Object.assign(state, { user: null, tela: 'clientes', clienteId: null, busca: '', clientes: [], produtos: [], config: {}, vendas: [], pagamentos: [] });
+    history.replaceState(null, '');
+    render();
+  }
+};
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-acao]');
+  if (!el) return;
+  const fn = acoes[el.dataset.acao];
+  if (fn) seguro(() => fn(el.dataset.id, el));
+});
+
+/* ---------- início ---------- */
+async function iniciar() {
+  if 
+const SUPABASE_URL = 'https://sderasllbmncwhppvbsb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_R9CtxIunqmgSHIbkxNj9uw_Jh0ZLPzT';
+    $('#app').innerHTML = htmlConfigFaltando();
+    return;
+  }
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  db.auth.onAuthStateChange(evento => {
+    if (evento === 'SIGNED_OUT' && state.user) { state.user = null; render(); }
+  });
+  const { data } = await db.auth.getSession();
+  state.user = data.session?.user ?? null;
+  if (state.user) {
+    try { await carregarBase(); } catch (err) { console.error(err); toast(msgErro(err), 'erro'); }
+  }
+  render();
+}
+iniciar();
+</script>
+</body>
+</html>
