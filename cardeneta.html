@@ -723,24 +723,38 @@ document.addEventListener('click', e => {
 
 /* ---------- início ---------- */
 async function iniciar() {
-  if 
-const SUPABASE_URL = 'https://sderasllbmncwhppvbsb.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_R9CtxIunqmgSHIbkxNj9uw_Jh0ZLPzT';
+  const SUPABASE_URL = 'https://sderasllbmncwhppvbsb.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_R9CtxIunqmgSHIbkxNj9uw_Jh0ZLPzT';
+
+  // Se você precisar validar se as chaves existem antes de prosseguir, 
+  // a verificação correta seria algo assim:
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
     $('#app').innerHTML = htmlConfigFaltando();
     return;
   }
+
   db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
   db.auth.onAuthStateChange(evento => {
-    if (evento === 'SIGNED_OUT' && state.user) { state.user = null; render(); }
+    if (evento === 'SIGNED_OUT' && state.user) { 
+      state.user = null; 
+      render(); 
+    }
   });
+
   const { data } = await db.auth.getSession();
   state.user = data.session?.user ?? null;
+
   if (state.user) {
-    try { await carregarBase(); } catch (err) { console.error(err); toast(msgErro(err), 'erro'); }
+    try { 
+      await carregarBase(); 
+    } catch (err) { 
+      console.error(err); 
+      toast(msgErro(err), 'erro'); 
+    }
   }
+  
   render();
 }
+
 iniciar();
-</script>
-</body>
-</html>
