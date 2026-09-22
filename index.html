@@ -794,24 +794,20 @@ function telWhats(t) {
   return d;
 }
 function abrirWhatsApp(c) {
-  const todos = movimentos().reverse();
-  const ultimos = todos.slice(-15);
+  const QTD_RECENTES = 8;
+  const recentes = state.vendas.slice(0, QTD_RECENTES).slice().reverse(); // mais antiga primeiro
   const negocio = state.config.nome_negocio ? ' na ' + state.config.nome_negocio : '';
   const primeiro = c.nome.trim().split(/\s+/)[0];
-  let msg = `Olá, ${primeiro}! 🍬\nSegue o extrato da sua conta${negocio}:\n\n`;
-  if (todos.length > ultimos.length) msg += `(últimos ${ultimos.length} lançamentos)\n`;
-  msg += ultimos.map(m => {
-    const quando = `${fmtDia(m.created_at)} ${new Date(m.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
-    return m.tipo === 'venda'
-      ? `${quando}  ${m.descricao || 'Venda'}  ${brl.format(m.valor)}`
-      : `${quando}  Pagamento recebido  -${brl.format(m.valor)}`;
-  }).join('\n');
+  let msg = `Olá, ${primeiro}! 🍬\n`;
   if (c.saldo > 0) {
+    msg += `Compras recentes${negocio}:\n\n`;
+    msg += recentes.map(v => `${fmtDia(v.created_at)}  ${v.descricao || 'Venda'}  ${brl.format(v.valor)}`).join('\n');
+    if (state.vendas.length > recentes.length) msg += `\n(mostrando as ${recentes.length} compras mais recentes)`;
     msg += `\n\n*Total devido: ${brl.format(c.saldo)}*`;
     if (state.config.chave_pix) msg += `\n\nPix para pagamento:\n${state.config.chave_pix}`;
     else toast('Cadastre a chave Pix em Ajustes para ela ir na mensagem', 'erro');
   } else {
-    msg += '\n\nSua conta está em dia. Obrigada!';
+    msg += `Sua conta está em dia${negocio}. Obrigada!`;
   }
   const tel = telWhats(c.telefone);
   window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank');
